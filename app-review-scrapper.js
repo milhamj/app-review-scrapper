@@ -4,13 +4,15 @@ var query = "online shopping"
 var numberOfApps = 5
 var numberOfPages = 2
 var appCountry = "id"
+var reviewLanguage = "id"
 
 console.log("app_name,reviewer_name,review_title,review_text,score")
 
 gplay.search({
 	term: query,
 	num: numberOfApps,
-	country: appCountry
+	country: appCountry,
+	throttle: 10
 }).then(getListOfApps);
 
 function getListOfApps(listOfApps)  {
@@ -26,6 +28,7 @@ function getListOfReviews(app, page) {
 		appId: app["appId"],
 		page: page,
 		sort: gplay.sort.HELPFULNESS,
+		lang: reviewLanguage
 		throttle: 10
 	}).then(function(reviews) {
 		reviews.forEach(function(review) {
