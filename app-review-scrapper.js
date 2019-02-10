@@ -62,5 +62,5 @@ function sanitize(string) {
 	if (!string) {
 		string = ""
 	}
-	return string.replaceAll(`"`, ``)
+	return string.replace(/"/g, ``)
 }
