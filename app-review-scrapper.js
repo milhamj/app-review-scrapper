@@ -28,7 +28,7 @@ function getListOfReviews(app, page) {
 		appId: app["appId"],
 		page: page,
 		sort: gplay.sort.HELPFULNESS,
-		lang: reviewLanguage
+		lang: reviewLanguage,
 		throttle: 10
 	}).then(function(reviews) {
 		reviews.forEach(function(review) {
