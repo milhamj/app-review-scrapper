@@ -1,0 +1,14 @@
+{
+  "name": "app-review-scrapper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app-review-scrapper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "@milhamj",
+  "license": "ISC",
+  "dependencies": {
+    "google-play-scraper": "^6.2.3"
+  }
+}
