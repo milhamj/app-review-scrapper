@@ -122,7 +122,7 @@ function getListOfReviews(app, page) {
 							.getLine()
 			output += line
 		})
-		fs.appendFile(outputPath, `${output}`, function (err) {
+		fs.appendFile(outputPath, output, function (err) {
 			if (err) throw err;
 		})
 
