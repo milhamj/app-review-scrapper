@@ -7,9 +7,13 @@ var numberOfApps = 10
 var numberOfPages = 100
 var appCountry = "id"
 var reviewLanguage = "id"
+var throttle = 100 //`0` means no throttle
+
 var outputDir = "./output"
 var fileName = "result.csv"
 var outputPath = outputDir + "/" + fileName
+
+var counter = 0
 
 handleArguments()
 initOutputFile()
@@ -39,6 +43,10 @@ function handleArguments() {
 			reviewLanguage = argv["lang"]
 		}
 
+		if (argv["throttle"]) {
+			throttle = argv["throttle"]
+		}
+
 		if (argv["output"]) {
 			fileName = argv["output"]
 			outputPath = outputDir + "/" + fileName
@@ -66,12 +74,17 @@ function initOutputFile() {
 }
 
 function doSearch() {
-	gplay.search({
+	let searchParams = {
 		term: query,
 		num: numberOfApps,
-		country: appCountry,
-		throttle: 10
-	}).then(getListOfApps)
+		country: appCountry
+	}
+
+	if (throttle != 0) {
+		searchParams["throttle"] = throttle
+	}
+
+	gplay.search(searchParams).then(getListOfApps)
 }
 
 function getListOfApps(listOfApps)  {
@@ -83,13 +96,18 @@ function getListOfApps(listOfApps)  {
 }
 
 function getListOfReviews(app, page) {
-	gplay.reviews({
+	let reviewsParams = {
 		appId: app["appId"],
 		page: page,
 		sort: gplay.sort.HELPFULNESS,
-		lang: reviewLanguage,
-		throttle: 10
-	}).then(function(reviews) {
+		lang: reviewLanguage
+	}
+
+	if (throttle != 0) {
+		reviewsParams["throttle"] = throttle
+	}
+
+	gplay.reviews(reviewsParams).then(function(reviews) {
 		reviews.forEach(function(review) {
 			let output = new CsvLineBuilder()
 							.append(sanitize(app["title"]))
@@ -102,6 +120,8 @@ function getListOfReviews(app, page) {
 				if (err) throw err;
 			})
 		})
+
+		updateProgress()
 	})
 }
 
@@ -127,4 +147,26 @@ function sanitize(string) {
 		string = ""
 	}
 	return string.replace(/"/g, ``)
+}
+
+function formatFloat(float) {
+	return Math.round(float * 100) / 100;
+}
+
+function updateProgress() {
+	counter++
+	let totalPages = numberOfApps * numberOfPages
+	let percentage = formatFloat((counter / totalPages) * 100)
+
+	printProgress(`Processed ${counter} of ${totalPages} total pages (${percentage}%)`)
+
+	if (counter == totalPages) {
+		console.log(``)
+	}
+}
+
+function printProgress(progress){
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
+    process.stdout.write(progress);
 }
