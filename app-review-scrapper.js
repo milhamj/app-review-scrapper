@@ -1,19 +1,68 @@
 var gplay = require('google-play-scraper');
+var argv = require('minimist')(process.argv.slice(2));
+var fs = require('fs');
 
-var query = "online shopping"
-var numberOfApps = 5
-var numberOfPages = 2
+var query = ""
+var numberOfApps = 10
+var numberOfPages = 100
 var appCountry = "id"
 var reviewLanguage = "id"
+var fileName = "result.csv"
 
-console.log("app_name,reviewer_name,review_title,review_text,score")
+handleArguments()
+initOutputFile()
+doSearch()
 
-gplay.search({
-	term: query,
-	num: numberOfApps,
-	country: appCountry,
-	throttle: 10
-}).then(getListOfApps);
+function handleArguments() {
+	console.log(argv)
+	if (argv) {
+		if (argv["query"]) {
+			query = argv["query"]
+		} else {
+			throw "Please specify your query using -query \"Your query here\""
+		}
+
+		if (argv["apps"]) {
+			numberOfApps = argv["app"]
+		}
+
+		if (argv["pages"]) {
+			numberOfPages = argv["pages"]
+		}
+
+		if (argv["country"]) {
+			appCountry = argv["country"]
+		}
+
+		if (argv["lang"]) {
+			reviewLanguage = argv["lang"]
+		}
+	} else {
+		throw "Please specify your query using -query \"Your query here\""
+	}
+}
+
+function initOutputFile() {
+	let outputDir = "./output"
+	let header = "app_name,reviewer_name,review_title,review_text,score"
+
+	if (!fs.existsSync(outputDir)){
+		fs.mkdirSync(outputDir);
+	}
+
+	fs.writeFile(outputDir + "/" + fileName, header, function (err) {
+		if (err) throw err;
+	})
+}
+
+function doSearch() {
+	gplay.search({
+		term: query,
+		num: numberOfApps,
+		country: appCountry,
+		throttle: 10
+	}).then(getListOfApps)
+}
 
 function getListOfApps(listOfApps)  {
 	listOfApps.forEach(function(app) {
@@ -39,7 +88,6 @@ function getListOfReviews(app, page) {
 							.append(sanitize(review["text"]))
 							.append(review["score"])
 							.getLine()
-			console.log(output)
 		})
 	})
 }

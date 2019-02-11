@@ -9,6 +9,7 @@
   "author": "@milhamj",
   "license": "ISC",
   "dependencies": {
-    "google-play-scraper": "^6.2.3"
+    "google-play-scraper": "^6.2.3",
+    "minimist": "^1.2.0"
   }
 }
