@@ -46,7 +46,7 @@ function handleArguments() {
 			reviewLanguage = argv["lang"]
 		}
 
-		if (argv["throttle"]) {
+		if (argv["throttle"] || argv["throttle"] == 0) {
 			throttle = argv["throttle"]
 		}
 
@@ -57,6 +57,9 @@ function handleArguments() {
 
 		console.log(``)
 		console.log(`Searching for reviews of ${numberOfApps} apps with query: "${query}", number of pages: ${numberOfPages}, country: ${appCountry}, and language: ${reviewLanguage}`)
+		if (throttle > 0) {
+			console.log(`Using throttling with maximum ${throttle} requests per second`)
+		}
 		console.log(`The output will be saved at ${outputPath}`)
 		console.log(``)
 	} else {
@@ -83,7 +86,7 @@ function doSearch() {
 		country: appCountry
 	}
 
-	if (throttle != 0) {
+	if (throttle > 0) {
 		searchParams["throttle"] = throttle
 	}
 
@@ -106,7 +109,7 @@ function getListOfReviews(app, page) {
 		lang: reviewLanguage
 	}
 
-	if (throttle != 0) {
+	if (throttle > 0) {
 		reviewsParams["throttle"] = throttle
 	}
 
@@ -160,10 +163,6 @@ function sanitize(string) {
 	return string.replace(/"/g, ``)
 }
 
-function formatFloat(float) {
-	return Math.round(float * 100) / 100;
-}
-
 function updateProgress() {
 	counter++
 	let totalPages = numberOfApps * numberOfPages
@@ -175,6 +174,10 @@ function updateProgress() {
 		console.log(``)
 		console.timeEnd(TIME_TAG);
 	}
+}
+
+function formatFloat(float) {
+	return Math.round(float * 100) / 100;
 }
 
 function printProgress(progress){
