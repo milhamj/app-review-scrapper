@@ -81,5 +81,5 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
-# Output csv files
-./output/*
+# Output files
+.output/
