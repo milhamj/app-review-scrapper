@@ -20,7 +20,7 @@ function handleArguments() {
 		if (argv["query"]) {
 			query = argv["query"]
 		} else {
-			throw "Please specify your query using -query \"Your query here\""
+			throw "Please specify your query using --query \"Your query here\""
 		}
 
 		if (argv["apps"]) {
@@ -49,7 +49,7 @@ function handleArguments() {
 		console.log(`The output will be saved at ${outputPath}`)
 		console.log(``)
 	} else {
-		throw "Please specify your query using -query \"Your query here\""
+		throw "Please specify your query using --query \"Your query here\""
 	}
 }
 
