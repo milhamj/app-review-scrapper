@@ -7,7 +7,7 @@ var numberOfApps = 10
 var numberOfPages = 100
 var appCountry = "id"
 var reviewLanguage = "id"
-var throttle = 100 //`0` means no throttle
+var throttle = 50
 
 var outputDir = "./output"
 var fileName = "result.csv"
@@ -111,19 +111,27 @@ function getListOfReviews(app, page) {
 	}
 
 	gplay.reviews(reviewsParams).then(function(reviews) {
+		let output = ""
 		reviews.forEach(function(review) {
-			let output = new CsvLineBuilder()
+			let line = new CsvLineBuilder()
 							.append(sanitize(app["title"]))
 							.append(sanitize(review["userName"]))
 							.append(sanitize(review["title"]))
 							.append(sanitize(review["text"]))
 							.append(review["score"])
 							.getLine()
-			fs.appendFile(outputPath, `${output}\r\n`, function (err) {
-				if (err) throw err;
-			})
+			output += line
+		})
+		fs.appendFile(outputPath, `${output}`, function (err) {
+			if (err) throw err;
 		})
 
+		updateProgress()
+	}, function(error) {
+		console.log(``)
+		console.log(`Error while processing ${app["title"]} page ${page}`)
+		console.log(error)
+		console.log(``)
 		updateProgress()
 	})
 }
@@ -141,7 +149,7 @@ function CsvLineBuilder() {
 	}
 
 	this.getLine = function() {
-		return this.line
+		return this.line + `\r\n`
 	}
 }
 
