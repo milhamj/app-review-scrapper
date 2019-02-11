@@ -7,14 +7,15 @@ var numberOfApps = 10
 var numberOfPages = 100
 var appCountry = "id"
 var reviewLanguage = "id"
+var outputDir = "./output"
 var fileName = "result.csv"
+var outputPath = outputDir + "/" + fileName
 
 handleArguments()
 initOutputFile()
 doSearch()
 
 function handleArguments() {
-	console.log(argv)
 	if (argv) {
 		if (argv["query"]) {
 			query = argv["query"]
@@ -23,7 +24,7 @@ function handleArguments() {
 		}
 
 		if (argv["apps"]) {
-			numberOfApps = argv["app"]
+			numberOfApps = argv["apps"]
 		}
 
 		if (argv["pages"]) {
@@ -37,20 +38,29 @@ function handleArguments() {
 		if (argv["lang"]) {
 			reviewLanguage = argv["lang"]
 		}
+
+		if (argv["output"]) {
+			fileName = argv["output"]
+			outputPath = outputDir + "/" + fileName
+		}
+
+		console.log(``)
+		console.log(`Searching for reviews of ${numberOfApps} apps with query: "${query}", number of pages: ${numberOfPages}, country: ${appCountry}, and language: ${reviewLanguage}`)
+		console.log(`The output will be saved at ${outputPath}`)
+		console.log(``)
 	} else {
 		throw "Please specify your query using -query \"Your query here\""
 	}
 }
 
 function initOutputFile() {
-	let outputDir = "./output"
 	let header = "app_name,reviewer_name,review_title,review_text,score"
 
 	if (!fs.existsSync(outputDir)){
 		fs.mkdirSync(outputDir);
 	}
 
-	fs.writeFile(outputDir + "/" + fileName, header, function (err) {
+	fs.writeFile(outputPath, `${header}\r\n`, function (err) {
 		if (err) throw err;
 	})
 }
@@ -88,6 +98,9 @@ function getListOfReviews(app, page) {
 							.append(sanitize(review["text"]))
 							.append(review["score"])
 							.getLine()
+			fs.appendFile(outputPath, `${output}\r\n`, function (err) {
+				if (err) throw err;
+			})
 		})
 	})
 }
