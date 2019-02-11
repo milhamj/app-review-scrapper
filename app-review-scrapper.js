@@ -15,6 +15,9 @@ var outputPath = outputDir + "/" + fileName
 
 var counter = 0
 
+var TIME_TAG = 'Processed all pages for'
+console.time(TIME_TAG);
+
 handleArguments()
 initOutputFile()
 doSearch()
@@ -162,6 +165,7 @@ function updateProgress() {
 
 	if (counter == totalPages) {
 		console.log(``)
+		console.timeEnd(TIME_TAG);
 	}
 }
 
